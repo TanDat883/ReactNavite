@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Button, Image } from 'react-native';
+import {Text, View, Button, Image, TouchableOpacity } from 'react-native';
 
 const YourApp = () => {
   return (
@@ -18,10 +18,29 @@ const YourApp = () => {
         <Text style={{fontWeight:'bold'}}>online server</Text>
       </View>
       <View style = {{flex:1, flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
-      <Button title='LOGIN' color='#E3C000'/>
-      <Button title='SIGNUP'color='#E3C000'/>
+       <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>LOGIN</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>SIGNUP</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
+const styles = {
+  button: {
+    backgroundColor: '#E3C000',
+    borderRadius: 10,
+    paddingVertical: 15, // Tăng chiều cao nút
+    paddingHorizontal: 30, // Tăng chiều rộng nút
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+};
 export default YourApp;
