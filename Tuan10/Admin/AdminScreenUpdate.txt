@@ -1,0 +1,166 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBikes, selectBikes } from '..bikeSlice';  Lấy danh sách xe từ Redux
+import { useNavigation } from '@react-navigationnative';
+
+const AdminScreen = () = {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const bikes = useSelector(selectBikes);  Lấy danh sách xe đạp từ Redux
+
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('');
+  const [image, setImage] = useState('');
+  const [originalPrice, setOriginalPrice] = useState('');
+  const [bikeId, setBikeId] = useState(null);
+
+  useEffect(() = {
+    dispatch(fetchBikes());  Lấy danh sách xe đạp khi màn hình được mở
+  }, [dispatch]);
+
+  const handleAddOrEditBike = async () = {
+    if (!name  !price  !type  !image  !originalPrice) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    const bikeData = {
+      name,
+      price parseFloat(price),
+      type,
+      image,
+      originalPrice parseFloat(originalPrice),
+    };
+
+    try {
+      const response = bikeId
+         await fetch(`https6459ebf065bd868e930ba426.mockapi.iobikes${bikeId}`, {
+            method 'PUT',
+            headers {
+              'Content-Type' 'applicationjson',
+            },
+            body JSON.stringify(bikeData),
+          })
+         await fetch('https6459ebf065bd868e930ba426.mockapi.iobikes', {
+            method 'POST',
+            headers {
+              'Content-Type' 'applicationjson',
+            },
+            body JSON.stringify(bikeData),
+          });
+
+      if (response.ok) {
+        Alert.alert('Success', bikeId  'Bike updated successfully'  'Bike added successfully');
+        dispatch(fetchBikes());  Cập nhật danh sách xe sau khi thêm hoặc chỉnh sửa
+        resetFields();
+      } else {
+        throw new Error(bikeId  'Failed to update bike'  'Failed to add bike');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const resetFields = () = {
+    setName('');
+    setPrice('');
+    setType('');
+    setImage('');
+    setOriginalPrice('');
+    setBikeId(null);
+  };
+
+  const renderBikeItem = ({ item }) = (
+    TouchableOpacity onPress={() = handleEditBike(item)} style={styles.bikeItem}
+      Text{item.name} - {item.price}Text
+    TouchableOpacity
+  );
+
+  const handleEditBike = (bike) = {
+    setName(bike.name);
+    setPrice(bike.price.toString());
+    setType(bike.type);
+    setImage(bike.image);
+    setOriginalPrice(bike.originalPrice.toString());
+    setBikeId(bike.id);
+  };
+
+  return (
+    View style={styles.container}
+      Text style={styles.title}{bikeId  'Edit Bike'  'Add New Bike'}Text
+      TextInput
+        style={styles.input}
+        placeholder=Bike Name
+        value={name}
+        onChangeText={setName}
+      
+      TextInput
+        style={styles.input}
+        placeholder=Price
+        value={price}
+        keyboardType=numeric
+        onChangeText={setPrice}
+      
+      TextInput
+        style={styles.input}
+        placeholder=Type
+        value={type}
+        onChangeText={setType}
+      
+      TextInput
+        style={styles.input}
+        placeholder=Image URL
+        value={image}
+        onChangeText={setImage}
+      
+      TextInput
+        style={styles.input}
+        placeholder=Original Price
+        value={originalPrice}
+        keyboardType=numeric
+        onChangeText={setOriginalPrice}
+      
+      Button title={bikeId  Update Bike  Add Bike} onPress={handleAddOrEditBike} 
+
+      FlatList
+        data={bikes}
+        keyExtractor={(item) = item.id.toString()}
+        renderItem={renderBikeItem}
+        style={styles.list}
+      
+    View
+  );
+};
+
+const styles = StyleSheet.create({
+  container {
+    flex 1,
+    padding 20,
+    backgroundColor '#fff',
+  },
+  title {
+    fontSize 24,
+    fontWeight 'bold',
+    marginBottom 20,
+    textAlign 'center',
+  },
+  input {
+    height 40,
+    borderColor 'gray',
+    borderWidth 1,
+    marginBottom 15,
+    paddingHorizontal 10,
+  },
+  list {
+    marginTop 20,
+  },
+  bikeItem {
+    padding 15,
+    borderBottomWidth 1,
+    borderBottomColor '#ccc',
+  },
+});
+
+export default AdminScreen;
